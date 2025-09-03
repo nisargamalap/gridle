@@ -14,6 +14,7 @@ const UserManagement = () => {
   const [roleFilter, setRoleFilter] = useState("all")
   const [selectedUser, setSelectedUser] = useState(null)
   const [showActivityModal, setShowActivityModal] = useState(false)
+  const [perPage, setPerPage] = useState(10)
 
   useEffect(() => {
     fetchUsers()
@@ -29,7 +30,7 @@ const UserManagement = () => {
     try {
       const queryParams = new URLSearchParams({
         page: page.toString(),
-        limit: "10",
+        limit: String(perPage),
         sortBy: sortField,
         sortOrder: sortOrder,
         ...(search && { search }),
@@ -131,9 +132,61 @@ const UserManagement = () => {
 
   return (
     <div className="bg-card text-card-foreground p-8 md:p-10 rounded-2xl shadow-lg border border-border/70 max-w-7xl mx-auto">
-      <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-8 text-pretty tracking-tight">
-        User Management
-      </h3>
+      {/* Header Toolbar */}
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h3 className="text-2xl md:text-3xl font-semibold text-foreground text-pretty tracking-tight">
+          User Management
+        </h3>
+        <div className="flex items-center gap-2">
+          <select
+            value={perPage}
+            onChange={(e) => {
+              setPerPage(Number(e.target.value))
+              // refetch with new page size
+              fetchUsers(1, userSearchQuery)
+            }}
+            className="px-3 py-2 text-sm border border-border rounded-lg bg-input"
+            aria-label="Rows per page"
+          >
+            <option value={10}>10 / page</option>
+            <option value={25}>25 / page</option>
+            <option value={50}>50 / page</option>
+          </select>
+          <button
+            onClick={() => fetchUsers(userPage, userSearchQuery)}
+            className="px-3 py-2 rounded-lg bg-secondary text-secondary-foreground"
+          >
+            Refresh
+          </button>
+          <button
+            onClick={() => {
+              const header = ["Name", "Email", "Role", "Created", "Last Activity", "Status"]
+              const rows = users.map((u) => [
+                u.name,
+                u.email,
+                u.role,
+                u.createdAt ? new Date(u.createdAt).toISOString() : "",
+                u.lastActivity ? new Date(u.lastActivity).toISOString() : "",
+                u.isBanned ? "banned" : u.isActive ? "active" : "inactive",
+              ])
+              const csv = [
+                header.join(","),
+                ...rows.map((r) => r.map((v) => `"${String(v ?? "").replaceAll('"', '""')}"`).join(",")),
+              ].join("\n")
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement("a")
+              a.href = url
+              a.download = "users.csv"
+              a.click()
+              URL.revokeObjectURL(url)
+            }}
+            className="px-3 py-2 rounded-lg bg-primary text-primary-foreground"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
 
       {/* Filters and Search */}
       <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">

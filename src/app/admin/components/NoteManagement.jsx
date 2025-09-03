@@ -20,6 +20,7 @@ const NoteManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [csvBusy, setCsvBusy] = useState(false)
 
   useEffect(() => {
     fetchNotes()
@@ -169,9 +170,65 @@ const NoteManagement = () => {
 
   return (
     <div className="bg-card text-card-foreground p-8 md:p-10 rounded-2xl shadow-lg border border-border/70 max-w-7xl mx-auto">
-      <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-8 text-pretty tracking-tight">
-        Note Management
-      </h3>
+      {/* Header toolbar with quick filters and CSV export */}
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h3 className="text-2xl md:text-3xl font-semibold text-foreground text-pretty tracking-tight">
+          Note Management
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleFilterChange("archived", "")}
+            className={`px-3 py-2 rounded-lg text-sm ${noteFilters.archived === "" ? "bg-muted" : "bg-input"}`}
+            aria-pressed={noteFilters.archived === ""}
+          >
+            All
+          </button>
+          <button
+            onClick={() => handleFilterChange("archived", "false")}
+            className={`px-3 py-2 rounded-lg text-sm ${noteFilters.archived === "false" ? "bg-muted" : "bg-input"}`}
+            aria-pressed={noteFilters.archived === "false"}
+          >
+            Active
+          </button>
+          <button
+            onClick={() => handleFilterChange("archived", "true")}
+            className={`px-3 py-2 rounded-lg text-sm ${noteFilters.archived === "true" ? "bg-muted" : "bg-input"}`}
+            aria-pressed={noteFilters.archived === "true"}
+          >
+            Archived
+          </button>
+          <button
+            onClick={() => {
+              setCsvBusy(true)
+              const header = ["Title", "Author", "Task", "Tags", "Created", "Status"]
+              const rows = filteredNotes.map((n) => [
+                n.title,
+                n.user?.name || "",
+                n.task?.title || "",
+                (n.tags || []).join("|"),
+                n.createdAt ? new Date(n.createdAt).toISOString() : "",
+                n.isArchived ? "Archived" : "Active",
+              ])
+              const csv = [
+                header.join(","),
+                ...rows.map((r) => r.map((v) => `"${String(v ?? "").replaceAll('"', '""')}"`).join(",")),
+              ].join("\n")
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement("a")
+              a.href = url
+              a.download = "notes.csv"
+              a.click()
+              URL.revokeObjectURL(url)
+              setCsvBusy(false)
+            }}
+            disabled={csvBusy}
+            className="px-3 py-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-60"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-6">
@@ -205,15 +262,6 @@ const NoteManagement = () => {
               {task.title}
             </option>
           ))}
-        </select>
-        <select
-          value={noteFilters.archived}
-          onChange={(e) => handleFilterChange("archived", e.target.value)}
-          className="px-3 py-2 text-sm border border-border rounded-lg bg-input text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <option value="">All Notes</option>
-          <option value="false">Active Only</option>
-          <option value="true">Archived Only</option>
         </select>
       </div>
 
