@@ -7,7 +7,37 @@ import { PlusIcon } from "../../components/ui/ClientLayout"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
-const AssistantWidget = dynamic(() => import("../assistant/assistant-widget"), { ssr: false })
+const VoiceWidget = dynamic(() => import("../assistant/voice-widget"), { ssr: false })
+
+async function testGeminiAssistant(message = "hi") {
+  const payload = { message }
+  console.log("[v0][assistant][client] sending payload:", payload)
+  try {
+    const res = await fetch("/api/assistant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+    const ctype = res.headers.get("content-type") || ""
+    console.log("[v0][assistant][client] status/content-type:", res.status, ctype)
+    let data = null
+    if (ctype.includes("application/json")) {
+      data = await res.json()
+    } else {
+      const text = await res.text()
+      data = { error: `Unexpected content-type: ${ctype}`, preview: text.slice(0, 160) }
+    }
+    console.log("[v0][assistant][client] response:", { status: res.status, data })
+    if (!res.ok) {
+      alert(`Assistant error ${res.status}: ${data?.error || "unknown"}`)
+    } else {
+      alert(`Gemini replied: ${data?.text?.slice(0, 120) || "(empty)"}`)
+    }
+  } catch (e) {
+    console.log("[v0][assistant][client] fetch error:", e.message)
+    alert(`Assistant request failed: ${e.message}`)
+  }
+}
 
 const DashboardPage = () => {
   const [date, setDate] = useState(new Date())
@@ -271,9 +301,17 @@ const DashboardPage = () => {
                 AI Suggestion
               </span>
             </h3>
-            <div className="relative">
-              {/* Assistant widget anchored here */}
-              <AssistantWidget position="inline" />
+            <div className="relative flex items-center gap-2">
+              {/* Voice widget anchored here */}
+              <VoiceWidget position="inline" />
+              <button
+                type="button"
+                onClick={() => testGeminiAssistant("Hello Gemini, reply with a short greeting.")}
+                className="rounded-md border px-2 py-1 text-xs hover:bg-accent"
+                title="Send test to /api/assistant and log result"
+              >
+                Test Gemini
+              </button>
             </div>
           </div>
           {topPriorityTask ? (

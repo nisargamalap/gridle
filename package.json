@@ -13,6 +13,7 @@
     "@auth/mongodb-adapter": "^3.10.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-label": "^2.1.7",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
