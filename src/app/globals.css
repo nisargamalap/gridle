@@ -1,0 +1,126 @@
+/* src/app/globals.css */
+
+/* Import react-calendar's stylesheet at the very top. */
+@import 'react-calendar/dist/Calendar.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define your custom HSL color values and Shadcn UI defaults */
+:root {
+  --background: 210 15% 95%; /* Your custom white: #F3F4F6 */
+  --foreground: 224 71% 4%; /* A dark grey/black for text on light background */
+
+  --card: 0 0% 100%; /* Default white for cards */
+  --card-foreground: 224 71% 4%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71% 4%;
+
+  --primary: 221 66% 32%; /* Your dark blue: #1E3A8A (for sidebar, main buttons) */
+  --primary-foreground: 0 0% 100%; /* White text on primary */
+
+  --secondary: 210 20% 90%; /* A light grey for secondary actions/backgrounds */
+  --secondary-foreground: 220 9% 46%;
+
+  --muted: 210 20% 96%; /* A very light grey */
+  --muted-foreground: 220 9% 46%;
+
+  --accent: 217 91% 59%; /* Your light blue: #3B82F6 (for active sidebar item, highlights) */
+  --accent-foreground: 0 0% 100%; /* White text on accent */
+
+  --destructive: 0 84.2% 60.2%; /* Red for destructive actions */
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 220 13% 91%; /* Light grey border */
+  --input: 220 13% 91%;
+  --ring: 217 91% 59%; /* Often matches accent or primary for focus rings */
+
+  --radius: 0.5rem; /* Default border radius for Shadcn components */
+}
+
+/* Optional: Dark mode variables (if you plan to implement dark mode) */
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 210 15% 95%;
+  --card: 220 10% 8%;
+  --card-foreground: 210 15% 95%;
+  --popover: 220 10% 8%;
+  --popover-foreground: 210 15% 95%;
+  --primary: 217 91% 59%; /* Inverted primary/accent for dark mode example */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 10% 12%;
+  --secondary-foreground: 210 15% 65%;
+  --muted: 220 10% 12%;
+  --muted-foreground: 210 15% 65%;
+  --accent: 221 66% 32%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 215 20.2% 65.1%;
+  --input: 215 20.2% 65.1%;
+  --ring: 217 91% 59%;
+}
+
+/* Base styles for Shadcn components (using @apply for consistency) */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for react-calendar to integrate with your theme */
+.react-calendar {
+  border: none !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
+  font-family: var(--font-albert-sans), sans-serif !important;
+  background-color: hsl(var(--card)) !important;
+}
+
+.react-calendar__navigation button {
+  color: hsl(var(--foreground)) !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: hsl(var(--destructive)) !important;
+}
+
+.react-calendar__tile--now {
+  background-color: hsl(var(--secondary)) !important;
+  border-radius: var(--radius) !important;
+}
+
+.react-calendar__tile--active {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: var(--radius) !important;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background-color: hsl(var(--primary)) !important;
+}
+
+.react-calendar__month-view__days__day button {
+  position: relative;
+}
+.event-dot {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: hsl(var(--accent));
+  border-radius: 50%;
+}
