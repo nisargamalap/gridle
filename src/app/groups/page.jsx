@@ -508,8 +508,8 @@ const GroupsPage = () => {
             <form onSubmit={handleGroupAction} className="space-y-4">
               {currentGroupToEdit || isCreatingGroup ? (
                 <>
-                  <input type="text" placeholder="Group Name" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={groupFormName} onChange={(e) => setGroupFormName(e.target.value)} required />
-                  <input type="text" placeholder="Description" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={groupFormDescription} onChange={(e) => setGroupFormDescription(e.target.value)} />
+                  <input type="text" spellCheck={true} placeholder="Group Name" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={groupFormName} onChange={(e) => setGroupFormName(e.target.value)} required />
+                  <input type="text" spellCheck={true} placeholder="Description" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={groupFormDescription} onChange={(e) => setGroupFormDescription(e.target.value)} />
                 </>
               ) : (
                 <input type="text" placeholder="Enter Group Join Code" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={groupJoinCode} onChange={(e) => setGroupJoinCode(e.target.value)} required />

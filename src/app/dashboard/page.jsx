@@ -493,7 +493,11 @@ const DashboardPage = () => {
               onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
               className="w-full p-2 mb-3 border rounded"
             />
-            <textarea
+            <textarea 
+              spellCheck={true}
+              autoComplete="on"
+              autoCapitalize="on"
+              autoCorrect="on"
               placeholder={newItem.type === "task" ? "Description" : "Content"}
               value={newItem.description}
               onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}

@@ -588,7 +588,7 @@ const TasksPage = () => {
           <div className="bg-card p-8 rounded-xl shadow-lg w-full max-w-md border border-border">
             <h3 className="text-2xl font-semibold text-foreground mb-6">{isEditingTask ? 'Edit Task' : 'Add New Task'}</h3>
             <form onSubmit={handleSaveTask} className="space-y-4">
-              <input type="text" placeholder="Task Title" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormTitle} onChange={(e) => setTaskFormTitle(e.target.value)} required />
+              <input type="text" spellCheck={true} placeholder="Task Title" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormTitle} onChange={(e) => setTaskFormTitle(e.target.value)} required />
               <input type="date" placeholder="Due Date" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormDueDate} onChange={(e) => setTaskFormDueDate(e.target.value)} />
               <select className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormPriority} onChange={(e) => setTaskFormPriority(e.target.value)}>
                 <option value="High">High Priority</option>
@@ -596,7 +596,7 @@ const TasksPage = () => {
                 <option value="Low">Low Priority</option>
               </select>
               <input type="text" placeholder="Category (e.g., Work, Personal)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormCategory} onChange={(e) => setTaskFormCategory(e.target.value)} />
-              <textarea placeholder="Description (optional)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground h-20" value={taskFormDescription} onChange={(e) => setTaskFormDescription(e.target.value)} />
+              <textarea spellCheck={true} autoCorrect='on' autoCapitalize='on' placeholder="Description (optional)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground h-20" value={taskFormDescription} onChange={(e) => setTaskFormDescription(e.target.value)} />
               
               <button type="button" className="flex items-center text-primary hover:underline text-sm"><HiMicrophone className="mr-1" /> Voice Input for Title (AI)</button>
               

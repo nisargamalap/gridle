@@ -511,7 +511,11 @@ const NoteManagement = () => {
 
               <div>
                 <label className="block font-semibold mb-2">Content</label>
-                <textarea
+                <textarea 
+                  spellCheck={true}
+                  autoComplete="on"
+                  autoCapitalize="on"
+                  autoCorrect="on"
                   value={selectedNote.content}
                   onChange={(e) => setSelectedNote({ ...selectedNote, content: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg"

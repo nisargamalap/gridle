@@ -166,7 +166,11 @@ const TaskDetailPage = () => {
 
             <div>
               <label className="block text-sm font-medium text-muted-foreground">Description</label>
-              <textarea
+              <textarea 
+                spellCheck={true}
+                autoComplete="on"
+                autoCapitalize="on"
+                autoCorrect="on"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="mt-1 w-full border border-border rounded-lg px-3 py-2 text-foreground bg-input"

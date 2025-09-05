@@ -268,7 +268,11 @@ const NotesPage = () => {
                 onChange={(e) => setNoteFormTitle(e.target.value)}
                 required
               />
-              <textarea
+              <textarea 
+                spellCheck={true}
+              autoComplete="on"
+              autoCapitalize="on"
+              autoCorrect="on"
                 placeholder="Start writing your note here..."
                 className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent h-36"
                 value={noteFormContent}

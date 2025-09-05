@@ -546,7 +546,10 @@ const TaskManagement = () => {
               </div>
               <div>
                 <label className="block font-semibold mb-2">Description</label>
-                <textarea
+                <textarea 
+                spellCheck={true}
+                autoComplete="on"
+                autoCapitalize="on"
                   value={editingTask.description || ""}
                   onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
                   className="w-full p-2 border border-border rounded-lg"
