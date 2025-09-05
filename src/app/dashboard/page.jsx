@@ -273,9 +273,6 @@ const DashboardPage = () => {
             <div className="relative flex items-center gap-2">
               {/* Voice widget anchored here */}
               <VoiceWidget position="inline" onResult={setVoiceText} />
-          <button className="px-3 py-2 rounded-lg text-sm font-medium bg-secondary text-secondary-foreground">
-            ASK
-          </button>
             </div>
           </div>
           {/* 🔹 Show transcription result */}
