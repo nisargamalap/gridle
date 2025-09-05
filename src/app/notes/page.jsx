@@ -1,10 +1,11 @@
 // src/app/notes/page.jsx
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { PlusIcon } from "../../components/ui/ClientLayout"
 import { HiMicrophone } from "react-icons/hi"
 import VoiceWidget from "../assistant/voice-widget"
+import AutoFormatEditor from "@/components/AutoFormatEditor"
 const NotesPage = () => {
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,6 +18,8 @@ const NotesPage = () => {
   const [isSavingNote, setIsSavingNote] = useState(false)
   const [voiceText, setVoiceText] = useState("")
 
+  const editorRef = useRef(null)
+  const lastContentRef = useRef("")
   // Fetch notes from API
   useEffect(() => {
     const fetchNotes = async () => {
@@ -270,21 +273,33 @@ const NotesPage = () => {
                 required
               />
               <div className="relative">
-                <textarea
-                  spellCheck={true}
-                  autoComplete="on"
-                  autoCapitalize="on"
-                  autoCorrect="on"
-                  placeholder="Start writing your note here..."
-                  className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent h-36 pr-12"
-                  value={noteFormContent}
-                  onChange={(e) => setNoteFormContent(e.target.value)}
-                  required
-                ></textarea>
-                <div className="absolute bottom-2 right-2">
-                  <VoiceWidget position="inline" onResult={(transcript) => setNoteFormContent(prev => prev + (prev ? ' ' : '') + transcript)} />
-                </div>
-              </div>
+                <div className="relative">
+              <AutoFormatEditor
+  ref={editorRef}
+  initialContent={noteFormContent}
+  lastContentRef={lastContentRef}
+  onChange={(html) => {
+    lastContentRef.current = html
+    setNoteFormContent(html)
+  }}
+/>
+
+        <VoiceWidget
+          position="inline"
+          onResult={(transcript) => {
+            const editor = editorRef.current?.editor
+            if (!editor) return
+            // Insert at the end
+            editor.commands.insertContent((editor.getText() ? " " : "") + transcript)
+            // Update state with new content
+            const newContent = editor.getHTML()
+            lastContentRef.current = newContent
+            setNoteFormContent(newContent)
+          }}
+        />
+
+            </div>
+            </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <button

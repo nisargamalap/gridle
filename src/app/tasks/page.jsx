@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon } from '../../components/ui/ClientLayout'; 
 import { HiMicrophone } from 'react-icons/hi';
 import VoiceWidget from '../assistant/voice-widget';
+import AutoFormatEditor from '@/components/AutoFormatEditor';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -33,8 +34,10 @@ const TasksPage = () => {
 
   const [groups, setGroups] = useState([]);
   const [projects, setProjects] = useState([]);
-   const [voiceText, setVoiceText] = useState("")
-
+  const [voiceText, setVoiceText] = useState("")
+  
+  const editorRef = useRef(null)
+  const lastContentRef = useRef("")
   // Fetch tasks from API
   useEffect(() => {
     const fetchTasks = async () => {
@@ -599,10 +602,28 @@ const TasksPage = () => {
               </select>
               <input type="text" placeholder="Category (e.g., Work, Personal)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormCategory} onChange={(e) => setTaskFormCategory(e.target.value)} />
               <div className="relative">
-                <textarea spellCheck={true} autoCorrect='on' autoCapitalize='on' placeholder="Description (optional)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground h-20 pr-12" value={taskFormDescription} onChange={(e) => setTaskFormDescription(e.target.value)} />
-                <div className="absolute bottom-2 right-2">
-                  <VoiceWidget position="inline" onResult={(transcript) => setTaskFormDescription(prev => prev + (prev ? ' ' : '') + transcript)} />
-                </div>
+                <AutoFormatEditor
+                  ref={editorRef}
+                  initialContent={taskFormDescription}
+                  lastContentRef={lastContentRef}
+                  onChange={(html) => {
+                    lastContentRef.current = html
+                    setTaskFormDescription(html)
+                  }}
+                />
+                <VoiceWidget
+                  position="inline"
+                  onResult={(transcript) => {
+                    const editor = editorRef.current?.editor
+                    if (!editor) return
+                    // Insert at the end
+                    editor.commands.insertContent((editor.getText() ? " " : "") + transcript)
+                    // Update state with new content
+                    const newContent = editor.getHTML()
+                    lastContentRef.current = newContent
+                    setTaskFormDescription(newContent)
+                  }}
+                />
               </div>
               <div className="flex justify-end space-x-2 mt-6">
                 <button type="button" onClick={() => setShowTaskModal(false)} className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-secondary/80 transition-colors" disabled={isSavingTask}>Cancel</button>
