@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import { PlusIcon } from "../../components/ui/ClientLayout"
 import { HiMicrophone } from "react-icons/hi"
-
+import VoiceWidget from "../assistant/voice-widget"
 const NotesPage = () => {
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -15,6 +15,7 @@ const NotesPage = () => {
   const [noteFormTitle, setNoteFormTitle] = useState("")
   const [noteFormContent, setNoteFormContent] = useState("")
   const [isSavingNote, setIsSavingNote] = useState(false)
+  const [voiceText, setVoiceText] = useState("")
 
   // Fetch notes from API
   useEffect(() => {
@@ -268,25 +269,23 @@ const NotesPage = () => {
                 onChange={(e) => setNoteFormTitle(e.target.value)}
                 required
               />
-              <textarea 
-                spellCheck={true}
-              autoComplete="on"
-              autoCapitalize="on"
-              autoCorrect="on"
-                placeholder="Start writing your note here..."
-                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent h-36"
-                value={noteFormContent}
-                onChange={(e) => setNoteFormContent(e.target.value)}
-                required
-              ></textarea>
+              <div className="relative">
+                <textarea
+                  spellCheck={true}
+                  autoComplete="on"
+                  autoCapitalize="on"
+                  autoCorrect="on"
+                  placeholder="Start writing your note here..."
+                  className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent h-36 pr-12"
+                  value={noteFormContent}
+                  onChange={(e) => setNoteFormContent(e.target.value)}
+                  required
+                ></textarea>
+                <div className="absolute bottom-2 right-2">
+                  <VoiceWidget position="inline" onResult={(transcript) => setNoteFormContent(prev => prev + (prev ? ' ' : '') + transcript)} />
+                </div>
+              </div>
               <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  className="flex items-center text-primary hover:text-foreground text-sm underline-offset-4 hover:underline"
-                >
-                  {/* Voice input placeholder button, logic unchanged */}
-                  <HiMicrophone className="mr-1" /> Voice Input (AI)
-                </button>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"

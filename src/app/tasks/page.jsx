@@ -4,6 +4,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon } from '../../components/ui/ClientLayout'; 
 import { HiMicrophone } from 'react-icons/hi';
+import VoiceWidget from '../assistant/voice-widget';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -32,6 +33,7 @@ const TasksPage = () => {
 
   const [groups, setGroups] = useState([]);
   const [projects, setProjects] = useState([]);
+   const [voiceText, setVoiceText] = useState("")
 
   // Fetch tasks from API
   useEffect(() => {
@@ -596,10 +598,12 @@ const TasksPage = () => {
                 <option value="Low">Low Priority</option>
               </select>
               <input type="text" placeholder="Category (e.g., Work, Personal)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground" value={taskFormCategory} onChange={(e) => setTaskFormCategory(e.target.value)} />
-              <textarea spellCheck={true} autoCorrect='on' autoCapitalize='on' placeholder="Description (optional)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground h-20" value={taskFormDescription} onChange={(e) => setTaskFormDescription(e.target.value)} />
-              
-              <button type="button" className="flex items-center text-primary hover:underline text-sm"><HiMicrophone className="mr-1" /> Voice Input for Title (AI)</button>
-              
+              <div className="relative">
+                <textarea spellCheck={true} autoCorrect='on' autoCapitalize='on' placeholder="Description (optional)" className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-accent outline-none bg-input text-foreground h-20 pr-12" value={taskFormDescription} onChange={(e) => setTaskFormDescription(e.target.value)} />
+                <div className="absolute bottom-2 right-2">
+                  <VoiceWidget position="inline" onResult={(transcript) => setTaskFormDescription(prev => prev + (prev ? ' ' : '') + transcript)} />
+                </div>
+              </div>
               <div className="flex justify-end space-x-2 mt-6">
                 <button type="button" onClick={() => setShowTaskModal(false)} className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-secondary/80 transition-colors" disabled={isSavingTask}>Cancel</button>
                 <button type="submit" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-accent transition-colors flex items-center justify-center" disabled={isSavingTask}>

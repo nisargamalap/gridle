@@ -62,7 +62,7 @@ const VoiceWidget = ({ position = "inline", onResult }) => {
         isListening ? "bg-red-500 text-white" : "bg-secondary text-secondary-foreground"
       }`}
     >
-      {isListening ? "Listening..." : "🎤 Speak"}
+      {isListening ? "Listening..." : "🎤"}
     </button>
   )
 }

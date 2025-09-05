@@ -278,7 +278,7 @@ const DashboardPage = () => {
           {/* 🔹 Show transcription result */}
       {voiceText && (
         <p className="text-sm text-muted-foreground mb-4">
-          AI heard: {voiceText}
+           {voiceText}
         </p>
       )}
           {topPriorityTask ? (
