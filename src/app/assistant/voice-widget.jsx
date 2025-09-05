@@ -1,63 +1,70 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
-export default function VoiceWidget({ position, onResult }) {
-  const [isRecording, setIsRecording] = useState(false)
-  const [result, setResult] = useState("")
-  const mediaRecorderRef = useRef(null)
-  const chunksRef = useRef([])
+const VoiceWidget = ({ position = "inline", onResult }) => {
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef(null)
 
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: "audio/webm" })
-    chunksRef.current = []
+  useEffect(() => {
+    if (typeof window === "undefined") return
 
-    mediaRecorderRef.current.ondataavailable = (e) => {
-      if (e.data.size > 0) chunksRef.current.push(e.data)
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      console.warn("Web Speech API is not supported in this browser.")
+      return
     }
 
-    mediaRecorderRef.current.onstop = async () => {
-      const blob = new Blob(chunksRef.current, { type: "audio/webm" })
-      const formData = new FormData()
-      formData.append("audio", blob, "input.webm")
+    const recognition = new SpeechRecognition()
+    recognition.lang = "en-US" // 👈 change this to "hi-IN", "fr-FR", etc. for multilingual
+    recognition.continuous = false
+    recognition.interimResults = false
 
-      const res = await fetch("/api/translate", {
-        method: "POST",
-        body: formData,
-      })
-      const data = await res.json()
-      const text = data.translation || data.text || "No result"
-
-      setResult(text)          // local display
-      onResult?.(text)         // 🔹 notify parent (page.jsx)
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      if (onResult) onResult(transcript)
+      setIsListening(false)
     }
 
-    mediaRecorderRef.current.start()
-    setIsRecording(true)
-  }
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error)
+      setIsListening(false)
+    }
 
-  const stopRecording = () => {
-    mediaRecorderRef.current.stop()
-    setIsRecording(false)
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    recognitionRef.current = recognition
+  }, [onResult])
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      alert("Speech recognition not supported in this browser.")
+      return
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop()
+      setIsListening(false)
+    } else {
+      recognitionRef.current.start()
+      setIsListening(true)
+    }
   }
 
   return (
-    <div className={`flex flex-col items-${position} gap-2`}>
-      <button
-        onClick={isRecording ? stopRecording : startRecording}
-        className={`px-3 py-2 rounded-lg text-sm font-medium ${
-          isRecording ? "bg-red-500 text-white" : "bg-primary text-primary-foreground"
-        }`}
-      >
-        {isRecording ? "Stop" : "Speak"}
-      </button>
-
-      {result && (
-        <p className="text-xs text-muted-foreground max-w-[200px] truncate">
-          {result}
-        </p>
-      )}
-    </div>
+    <button
+      onClick={toggleListening}
+      className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${
+        isListening ? "bg-red-500 text-white" : "bg-secondary text-secondary-foreground"
+      }`}
+    >
+      {isListening ? "Listening..." : "🎤 Speak"}
+    </button>
   )
 }
+
+export default VoiceWidget
